@@ -1,10 +1,11 @@
 <idea-plugin>
     <id>com.github.novotnyr.idea.git.quickbranches</id>
-    <name>GitLab Quick Branches</name>
+    <name>Git Quick Branches</name>
     <version>3</version>
     <vendor>Róbert Novotný</vendor>
 
     <description><![CDATA[
+    Adds a quick branch switcher for a specific module into Git context menu
     ]]></description>
 
     <change-notes><![CDATA[
