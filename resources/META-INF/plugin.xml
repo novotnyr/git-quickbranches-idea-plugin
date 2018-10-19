@@ -1,0 +1,33 @@
+<idea-plugin>
+    <id>com.github.novotnyr.idea.git.quickbranches</id>
+    <name>GitLab Quick Branches</name>
+    <version>3</version>
+    <vendor>Róbert Novotný</vendor>
+
+    <description><![CDATA[
+    ]]></description>
+
+    <change-notes><![CDATA[
+    ]]>
+    </change-notes>
+
+    <idea-version since-build="145.0"/>
+
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.vcs</depends>
+    <depends>Git4Idea</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+    </extensions>
+
+    <actions>
+        <group>
+            <add-to-group group-id="Git.ContextMenu"/>
+            <separator/>
+            <action id="com.github.novotnyr.idea.git.BranchListActionGroup"
+                    class="com.github.novotnyr.idea.git.BranchListActionGroup">
+            </action>
+        </group>
+    </actions>
+
+</idea-plugin>
