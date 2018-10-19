@@ -9,10 +9,13 @@ import git4idea.branch.GitBrancher;
 import git4idea.branch.GitNewBranchOptions;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
-import one.util.streamex.StreamEx;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class CheckoutNewBranchAction extends AnAction {
     public CheckoutNewBranchAction() {
@@ -37,14 +40,28 @@ public class CheckoutNewBranchAction extends AnAction {
         }
 
         List<GitRepository> repositories = Collections.singletonList(repo);
-        GitNewBranchOptions options = GitBranchUtil.getNewBranchNameFromUser(project, repositories, "Create New Branch");
+        Map<GitRepository, String> repos = Collections.singletonMap(repo, GitUtil.HEAD);
+        GitNewBranchOptions options = getNewBranchNameFromUser(project, repositories);
         if (options != null) {
             if (options.shouldCheckout()) {
                 gitBrancher.checkoutNewBranch(options.getName(), repositories);
             } else {
-                gitBrancher.createBranch(options.getName(), StreamEx.of(repositories).toMap((position) -> {
-                    return "HEAD";
-                }));
+                gitBrancher.createBranch(options.getName(), repos);
+            }
+        }
+    }
+
+    private GitNewBranchOptions getNewBranchNameFromUser(Project project, List<GitRepository> repositories) {
+        String dialogTitle = "Create New Branch";
+        try {
+            return GitBranchUtil.getNewBranchNameFromUser(project, repositories, dialogTitle);
+        } catch (NoSuchMethodError e) {
+            try {
+                Method getNewBranchNameFromUser = GitBranchUtil.class.getMethod("getNewBranchNameFromUser", Project.class, Collection.class, String.class, String.class);
+                return (GitNewBranchOptions) getNewBranchNameFromUser.invoke(null, project, repositories, dialogTitle, "");
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+                ex.printStackTrace();
+                return null;
             }
         }
     }
