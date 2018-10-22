@@ -5,6 +5,9 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SelectedModule {
     private Project project;
 
@@ -23,6 +26,27 @@ public class SelectedModule {
         selectedModule.file = file;
         selectedModule.project = project;
         return selectedModule;
+    }
+
+    public static List<SelectedModule> manyOf(AnActionEvent event) {
+        List<SelectedModule> selectedModules = new ArrayList<>();
+
+        Project project = event.getProject();
+        if (project == null) {
+            return selectedModules;
+        }
+        VirtualFile[] files = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
+        if (files == null) {
+            return selectedModules;
+        }
+        for (VirtualFile file : files) {
+            SelectedModule selectedModule = new SelectedModule();
+            selectedModule.file = file;
+            selectedModule.project = project;
+
+            selectedModules.add(selectedModule);
+        }
+        return selectedModules;
     }
 
     public Project getProject() {

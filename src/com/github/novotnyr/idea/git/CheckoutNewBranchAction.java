@@ -26,14 +26,20 @@ public class CheckoutNewBranchAction extends AnAction {
     public void actionPerformed(AnActionEvent anActionEvent) {
         Project project = anActionEvent.getProject();
 
-        GitBrancher gitBrancher = GitBrancher.getInstance(project);
-
-        SelectedModule selectedModule = SelectedModule.fromEvent(anActionEvent);
-        if (selectedModule == null) {
+        List<SelectedModule> selectedModules = SelectedModule.manyOf(anActionEvent);
+        if (selectedModules.isEmpty()) {
             return;
         }
 
+        for (SelectedModule selectedModule : selectedModules) {
+            switchBranch(project, selectedModule);
+        }
+    }
+
+    private void switchBranch(Project project, SelectedModule selectedModule) {
+        GitBrancher gitBrancher = GitBrancher.getInstance(project);
         GitRepositoryManager repositoryManager = GitUtil.getRepositoryManager(project);
+
         GitRepository repo = repositoryManager.getRepositoryForFile(selectedModule.getFile());
         if (repo == null) {
             return;
@@ -49,6 +55,7 @@ public class CheckoutNewBranchAction extends AnAction {
                 gitBrancher.createBranch(options.getName(), repos);
             }
         }
+
     }
 
     private GitNewBranchOptions getNewBranchNameFromUser(Project project, List<GitRepository> repositories) {
