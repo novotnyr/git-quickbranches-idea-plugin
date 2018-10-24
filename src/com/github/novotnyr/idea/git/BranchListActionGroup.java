@@ -30,6 +30,9 @@ public class BranchListActionGroup extends ActionGroup {
     @NotNull
     @Override
     public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
+        if (anActionEvent == null) {
+            return NO_ACTIONS;
+        }
         Project project = anActionEvent.getProject();
         if (project == null) {
             return NO_ACTIONS;
