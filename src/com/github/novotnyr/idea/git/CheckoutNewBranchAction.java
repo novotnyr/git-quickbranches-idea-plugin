@@ -12,8 +12,9 @@ import git4idea.repo.GitRepositoryManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,31 +32,30 @@ public class CheckoutNewBranchAction extends AnAction {
             return;
         }
 
-        for (SelectedModule selectedModule : selectedModules) {
-            switchBranch(project, selectedModule);
-        }
+        switchBranch(project, selectedModules);
     }
 
-    private void switchBranch(Project project, SelectedModule selectedModule) {
+    private void switchBranch(Project project, Collection<SelectedModule> selectedModule) {
         GitBrancher gitBrancher = GitBrancher.getInstance(project);
         GitRepositoryManager repositoryManager = GitUtil.getRepositoryManager(project);
 
-        GitRepository repo = repositoryManager.getRepositoryForFile(selectedModule.getFile());
-        if (repo == null) {
-            return;
+        Map<GitRepository, String> branchMapping = new LinkedHashMap<>();
+        for (SelectedModule module : selectedModule) {
+            GitRepository repo = repositoryManager.getRepositoryForFile(module.getFile());
+            if (repo == null) {
+                return;
+            }
+            branchMapping.put(repo, GitUtil.HEAD);
         }
-
-        List<GitRepository> repositories = Collections.singletonList(repo);
-        Map<GitRepository, String> repos = Collections.singletonMap(repo, GitUtil.HEAD);
+        List<GitRepository> repositories = new ArrayList<>(branchMapping.keySet());
         GitNewBranchOptions options = getNewBranchNameFromUser(project, repositories);
         if (options != null) {
             if (options.shouldCheckout()) {
                 gitBrancher.checkoutNewBranch(options.getName(), repositories);
             } else {
-                gitBrancher.createBranch(options.getName(), repos);
+                gitBrancher.createBranch(options.getName(), branchMapping);
             }
         }
-
     }
 
     private GitNewBranchOptions getNewBranchNameFromUser(Project project, List<GitRepository> repositories) {
