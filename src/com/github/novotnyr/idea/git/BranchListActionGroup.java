@@ -37,19 +37,16 @@ public class BranchListActionGroup extends ActionGroup {
         if (project == null) {
             return NO_ACTIONS;
         }
-        GitBrancher gitBrancher = GitBrancher.getInstance(project);
-
         List<SelectedModule> selectedModules = SelectedModule.manyOf(anActionEvent);
         if (selectedModules.isEmpty()) {
             return NO_ACTIONS;
         }
-
+        GitBrancher gitBrancher = GitBrancher.getInstance(project);
         GitRepositoryManager repositoryManager = GitUtil.getRepositoryManager(project);
 
         Helper repoBranches = new Helper();
         for (SelectedModule selectedModule : selectedModules) {
             GitRepository repo = repositoryManager.getRepositoryForFile(selectedModule.getFile());
-            System.out.println("Found repo " + repo + " for " + selectedModule);
             if (repo == null) {
                 continue;
             }

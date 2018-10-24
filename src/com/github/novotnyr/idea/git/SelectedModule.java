@@ -4,8 +4,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SelectedModule {
@@ -28,7 +30,10 @@ public class SelectedModule {
         return selectedModule;
     }
 
-    public static List<SelectedModule> manyOf(AnActionEvent event) {
+    public static List<SelectedModule> manyOf(@Nullable AnActionEvent event) {
+        if (event == null) {
+            return Collections.emptyList();
+        }
         List<SelectedModule> selectedModules = new ArrayList<>();
 
         Project project = event.getProject();
