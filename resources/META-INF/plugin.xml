@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.github.novotnyr.idea.git.quickbranches</id>
     <name>Git Quick Branches</name>
-    <version>3</version>
+    <version>1</version>
     <vendor>Róbert Novotný</vendor>
 
     <description><![CDATA[
