@@ -5,10 +5,14 @@
     <vendor>Róbert Novotný</vendor>
 
     <description><![CDATA[
-    Adds a quick branch switcher for a specific module into Git context menu
+    Adds a quick branch switcher for a specific module into Git context menu.
+    Easily checkout branches for one or more modules within a project.
     ]]></description>
 
     <change-notes><![CDATA[
+    <ul>
+        <li>Checkout a branch for one or more projects</li>
+    </ul>
     ]]>
     </change-notes>
 
