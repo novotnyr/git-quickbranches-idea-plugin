@@ -6,7 +6,15 @@
 
     <description><![CDATA[
     Adds a quick branch switcher for a specific module into Git context menu.
-    Easily checkout branches for one or more modules within a project.
+    <p>
+    Switch branches on selected modules independently of the
+    <em>Execute Branch Operation on All Roots / Synchronous Branch Control</em> preference.
+    </p>
+    <p>
+        It is highly advised to add a Keyboard Shortcut in Preferences,
+        in <b>Plugins / Git Quick Branches / Checkout Branch</b>
+        to enable super-quick branch change on modules selected in the Project tree.
+    </p>
     ]]></description>
 
     <change-notes><![CDATA[
