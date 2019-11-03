@@ -44,7 +44,7 @@ public class BranchListActionGroup extends ActionGroup {
         GitBrancher gitBrancher = GitBrancher.getInstance(project);
         GitRepositoryManager repositoryManager = GitUtil.getRepositoryManager(project);
 
-        Helper repoBranches = new Helper();
+        RepoBranches repoBranches = new RepoBranches();
         for (SelectedModule selectedModule : selectedModules) {
             GitRepository repo = repositoryManager.getRepositoryForFile(selectedModule.getFile());
             if (repo == null) {
@@ -70,21 +70,17 @@ public class BranchListActionGroup extends ActionGroup {
         return actions.toArray(new AnAction[0]);
     }
 
-    public static class Helper {
+    private static class RepoBranches {
         private MultiMap<GitRepository, String> mapping = new MultiMap<>();
 
-        public void add(GitRepository repo, String branchName) {
-            this.mapping.putValue(repo, branchName);
-        }
-
-        public void addLocalBranches(GitRepository repository) {
+        void addLocalBranches(GitRepository repository) {
             GitBranchesCollection branches = repository.getBranches();
             for (GitLocalBranch localBranch : branches.getLocalBranches()) {
                 this.mapping.putValue(repository, localBranch.getName());
             }
         }
 
-        public List<String> getOverlappingBranches() {
+        List<String> getOverlappingBranches() {
             List<String> overlappingBranches = new ArrayList<>();
             for (Map.Entry<GitRepository, Collection<String>> entry : mapping.entrySet()) {
                 Collection<String> entryBranches = entry.getValue();
@@ -97,7 +93,7 @@ public class BranchListActionGroup extends ActionGroup {
             return overlappingBranches;
         }
 
-        public List<GitRepository> getRepositoriesWithBranch(String branch) {
+        List<GitRepository> getRepositoriesWithBranch(String branch) {
             List<GitRepository> repositories = new ArrayList<>();
             for (Map.Entry<GitRepository, Collection<String>> entry : mapping.entrySet()) {
                 GitRepository repo = entry.getKey();
