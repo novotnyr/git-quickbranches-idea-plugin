@@ -4,14 +4,13 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import git4idea.GitUtil;
-import git4idea.branch.GitBranchUtil;
 import git4idea.branch.GitBrancher;
-import git4idea.branch.GitNewBranchOptions;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
+import git4idea.validators.GitNewBranchNameValidator;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -60,16 +59,22 @@ public class CheckoutNewBranchAction extends AnAction {
 
     private GitNewBranchOptions getNewBranchNameFromUser(Project project, List<GitRepository> repositories) {
         String dialogTitle = "Create New Branch";
-        try {
-            return GitBranchUtil.getNewBranchNameFromUser(project, repositories, dialogTitle);
-        } catch (NoSuchMethodError e) {
-            try {
-                Method getNewBranchNameFromUser = GitBranchUtil.class.getMethod("getNewBranchNameFromUser", Project.class, Collection.class, String.class, String.class);
-                return (GitNewBranchOptions) getNewBranchNameFromUser.invoke(null, project, repositories, dialogTitle, "");
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-                ex.printStackTrace();
-                return null;
-            }
-        }
+        return getNewBranchNameFromUser(project, repositories, dialogTitle, "");
+    }
+
+    /**
+     * <p>Shows a message dialog to enter the name of new branch.</p>
+     * <p>Optionally allows to not checkout this branch, and just create it.</p>
+     *
+     * <p>Mirrors {@code git4idea.branch.GitBranchUtil#getNewBranchNameFromUser(com.intellij.openapi.project.Project, java.util.Collection, java.lang.String, java.lang.String)}</p>
+     *
+     * @return the name of the new branch and whether it should be checked out, or {@code null} if user has cancelled the dialog.
+     */
+    @Nullable
+    public static GitNewBranchOptions getNewBranchNameFromUser(@NotNull Project project,
+                                                               @NotNull Collection<GitRepository> repositories,
+                                                               @NotNull String dialogTitle,
+                                                               @Nullable String initialName) {
+        return new GitNewBranchDialog(project, dialogTitle, initialName, GitNewBranchNameValidator.newInstance(repositories)).showAndGetOptions();
     }
 }

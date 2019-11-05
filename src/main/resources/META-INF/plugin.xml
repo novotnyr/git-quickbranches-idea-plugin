@@ -1,7 +1,6 @@
 <idea-plugin>
     <id>com.github.novotnyr.idea.git.quickbranches</id>
     <name>Git Quick Branches</name>
-    <version>2-SNAPSHOT</version>
     <vendor>Róbert Novotný</vendor>
 
     <description><![CDATA[
@@ -16,15 +15,6 @@
         to enable super-quick branch change on modules selected in the Project tree.
     </p>
     ]]></description>
-
-    <change-notes><![CDATA[
-    <ul>
-        <li>Fix errors on freshly created Git projects</li>
-    </ul>
-    ]]>
-    </change-notes>
-
-    <idea-version since-build="171.0"/>
 
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.vcs</depends>

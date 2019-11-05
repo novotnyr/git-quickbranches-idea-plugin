@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '0.4.11'
+}
+
+group 'com.github.novotnyr'
+version '3-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    version '2018.1'
+    updateSinceUntilBuild false
+    plugins 'Git4Idea'
+}
+patchPluginXml {
+    sinceBuild '181'
+    changeNotes """
+      <ul>
+          <li>Improve binary compatibility with future IDE versions 
+      </ul>
+      """
+}
