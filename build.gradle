@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.novotnyr'
-version '4-SNAPSHOT'
+version '4'
 
 sourceCompatibility = 1.8
 
@@ -25,7 +25,7 @@ patchPluginXml {
     sinceBuild '181'
     changeNotes """
       <ul>
-          <li>Improve binary compatibility with future IDE versions 
+          <li>Improve branch overlap algorithm 
       </ul>
       """
 }
