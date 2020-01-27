@@ -84,12 +84,12 @@ public class BranchListActionGroup extends ActionGroup {
             List<String> overlappingBranches = new ArrayList<>();
             for (Map.Entry<GitRepository, Collection<String>> entry : mapping.entrySet()) {
                 Collection<String> entryBranches = entry.getValue();
-                if (overlappingBranches == null) {
-                    overlappingBranches = new ArrayList<>(entryBranches);
-                } else {
-                    overlappingBranches.retainAll(entryBranches);
+                if (overlappingBranches.isEmpty()) {
+                    overlappingBranches.addAll(entryBranches);
                 }
+                overlappingBranches.retainAll(entryBranches);
             }
+
             return overlappingBranches;
         }
 
