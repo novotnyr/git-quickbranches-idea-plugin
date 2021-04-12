@@ -34,7 +34,7 @@ patchPluginXml {
     sinceBuild '181'
     changeNotes """
       <ul>
-          <li>Improve branch overlap algorithm 
+          <li>Resolve synchronous repository update in EDT (#1)
       </ul>
       """
 }
