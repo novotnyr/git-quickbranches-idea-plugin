@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.github.novotnyr'
-version '5'
+version '6-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -34,7 +34,7 @@ patchPluginXml {
     sinceBuild '181'
     changeNotes """
       <ul>
-          <li>Resolve synchronous repository update in EDT (#1)
+          <li>
       </ul>
       """
 }
