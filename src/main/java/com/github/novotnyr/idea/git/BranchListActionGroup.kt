@@ -31,7 +31,7 @@ class BranchListActionGroup : ActionGroup("Checkout Branch", true) {
             .getOverlappingBranches()
             .forEach { localBranchName ->
                 actions.add(object : AnAction(localBranchName) {
-                    override fun actionPerformed(e: AnActionEvent?) {
+                    override fun actionPerformed(e: AnActionEvent) {
                         val repositoriesWithBranch = repositories.getRepositoriesWithBranch(localBranchName)
                         gitBrancher.checkout(localBranchName, false, repositoriesWithBranch, null)
                     }
