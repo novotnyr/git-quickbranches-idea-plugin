@@ -2,20 +2,26 @@ package com.github.novotnyr.idea.git;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.project.Project;
 import git4idea.GitUtil;
 import git4idea.branch.GitBrancher;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
 import git4idea.validators.GitNewBranchNameValidator;
+import org.jetbrains.annotations.CalledInAwt;
+import org.jetbrains.annotations.CalledInBackground;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class CheckoutNewBranchAction extends AnAction {
     public CheckoutNewBranchAction() {
@@ -38,23 +44,39 @@ public class CheckoutNewBranchAction extends AnAction {
         GitBrancher gitBrancher = GitBrancher.getInstance(project);
         GitRepositoryManager repositoryManager = GitUtil.getRepositoryManager(project);
 
-        Map<GitRepository, String> branchMapping = new LinkedHashMap<>();
-        for (SelectedModule module : selectedModule) {
-            GitRepository repo = repositoryManager.getRepositoryForFile(module.getFile());
-            if (repo == null) {
-                return;
+        ProgressManager progressManager = ProgressManager.getInstance();
+        Task.Backgroundable task = new Task.Backgroundable(project, "Retrieving Git branches", true) {
+            private ConcurrentMap<GitRepository, String> branchMapping = new ConcurrentHashMap<>();
+
+            @Override
+            @CalledInBackground
+            public void run(@NotNull ProgressIndicator indicator) {
+                for (SelectedModule module : selectedModule) {
+                    GitRepository repo = repositoryManager.getRepositoryForFile(module.getFile());
+                    if (repo == null) {
+                        return;
+                    }
+                    this.branchMapping.put(repo, GitUtil.HEAD);
+                }
             }
-            branchMapping.put(repo, GitUtil.HEAD);
-        }
-        List<GitRepository> repositories = new ArrayList<>(branchMapping.keySet());
-        GitNewBranchOptions options = getNewBranchNameFromUser(project, repositories);
-        if (options != null) {
-            if (options.shouldCheckout()) {
-                gitBrancher.checkoutNewBranch(options.getName(), repositories);
-            } else {
-                gitBrancher.createBranch(options.getName(), branchMapping);
+
+            @Override
+            @CalledInAwt
+            public void onSuccess() {
+                List<GitRepository> repositories = new ArrayList<>(this.branchMapping.keySet());
+                GitNewBranchOptions options = getNewBranchNameFromUser(project, repositories);
+                if (options != null) {
+                    if (options.shouldCheckout()) {
+                        gitBrancher.checkoutNewBranch(options.getName(), repositories);
+                    } else {
+                        gitBrancher.createBranch(options.getName(), this.branchMapping);
+                    }
+                }
             }
-        }
+        };
+        var progressIndicator = new BackgroundableProcessIndicator(task);
+        progressManager.runProcessWithProgressAsynchronously(task, progressIndicator);
+
     }
 
     private GitNewBranchOptions getNewBranchNameFromUser(Project project, List<GitRepository> repositories) {
