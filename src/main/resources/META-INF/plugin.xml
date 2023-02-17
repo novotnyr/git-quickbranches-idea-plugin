@@ -24,7 +24,7 @@
     </extensions>
 
     <actions>
-        <group>
+        <group id="com.github.novotnyr.idea.git.quickbranches">
             <add-to-group group-id="Git.ContextMenu"/>
             <separator/>
             <action id="com.github.novotnyr.idea.git.BranchListActionGroup"
