@@ -7,13 +7,13 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread;
+import com.intellij.util.concurrency.annotations.RequiresEdt;
 import git4idea.GitUtil;
 import git4idea.branch.GitBrancher;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
 import git4idea.validators.GitNewBranchNameValidator;
-import org.jetbrains.annotations.CalledInAwt;
-import org.jetbrains.annotations.CalledInBackground;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +49,7 @@ public class CheckoutNewBranchAction extends AnAction {
             private ConcurrentMap<GitRepository, String> branchMapping = new ConcurrentHashMap<>();
 
             @Override
-            @CalledInBackground
+            @RequiresBackgroundThread
             public void run(@NotNull ProgressIndicator indicator) {
                 for (SelectedModule module : selectedModule) {
                     GitRepository repo = repositoryManager.getRepositoryForFile(module.getFile());
@@ -61,7 +61,7 @@ public class CheckoutNewBranchAction extends AnAction {
             }
 
             @Override
-            @CalledInAwt
+            @RequiresEdt
             public void onSuccess() {
                 List<GitRepository> repositories = new ArrayList<>(this.branchMapping.keySet());
                 GitNewBranchOptions options = getNewBranchNameFromUser(project, repositories);
