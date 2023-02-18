@@ -30,6 +30,7 @@ public class GitNewBranchDialog extends InputDialog {
         super(project, message, title, null, null, validator);
     }
 
+    @Nullable
     public GitNewBranchOptions showAndGetOptions() {
         if (!showAndGet()) {
             return null;

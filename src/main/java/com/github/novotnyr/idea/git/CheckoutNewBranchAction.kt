@@ -22,13 +22,12 @@ class CheckoutNewBranchAction : AnAction("Checkout New Branch...", "Checkout and
 
     private fun switchBranch(project: Project, selectedModule: Collection<SelectedModule>) {
         val gitBrancher = GitBrancher.getInstance(project)
-        val task = RetrieveGitBranchesTask(project, selectedModule) { branchMapping ->
-            val repositories = ArrayList(branchMapping.keys)
+        val task = RetrieveGitBranchesTask(project, selectedModule) { repositories ->
             val options = getNewBranchNameFromUser(project, repositories) ?: return@RetrieveGitBranchesTask
             if (options.shouldCheckout()) {
                 gitBrancher.checkoutNewBranch(options.name, repositories)
             } else {
-                gitBrancher.createBranch(options.name, branchMapping)
+                gitBrancher.createBranch(options.name, repositories.getBranchesOnHead())
             }
         }
         ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, BackgroundableProcessIndicator(task))
