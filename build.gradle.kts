@@ -41,6 +41,6 @@ tasks {
     }
 
     publishPlugin {
-        token.set(System.getenv("PUBLISH_TOKEN"))
+        token.set(intellijPublishToken)
     }
 }
