@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.novotnyr"
-version = "6-SNAPSHOT"
+version = "6"
 val intellijPublishToken: String by project
 
 repositories {
@@ -35,7 +35,9 @@ tasks {
         sinceBuild.set("213")
         changeNotes.set("""
             <ul>
-                <li>Bugs and improvements/li>
+                <li>Require at least IntelliJ 2023.1</li>
+                <li>Fix issues with branch checkout</li>
+                <li>Improve performance by offloading tasks to background threads</li>
             </ul>
         """.trimIndent())
     }
