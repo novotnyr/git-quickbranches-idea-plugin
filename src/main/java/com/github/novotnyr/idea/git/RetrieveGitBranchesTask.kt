@@ -26,9 +26,8 @@ class RetrieveGitBranchesTask(
 
     @RequiresBackgroundThread
     override fun run(indicator: ProgressIndicator) {
-        for (module in selectedModule) {
-            val repo: GitRepository = repositoryManager.getRepositoryForFile(module.file) ?: return
-            repositories.add(repo)
+        selectedModule.mapNotNullTo(repositories) {
+            repositoryManager.getRepositoryForFile(it.file)
         }
     }
 
