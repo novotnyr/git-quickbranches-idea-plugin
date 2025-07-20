@@ -1,46 +1,52 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.8.0"
-    id("org.jetbrains.intellij") version "1.13.0"
+    id("org.jetbrains.kotlin.jvm") version "2.2.0"
+    id("org.jetbrains.intellij.platform") version "2.6.0"
 }
 
 group = "com.github.novotnyr"
 version = "7-SNAPSHOT"
-val intellijPublishToken: String by project
 
 repositories {
     mavenCentral()
-}
-
-kotlin {
-    jvmToolchain(11)
-}
-
-intellij {
-    version.set("2021.3")
-    type.set("IC")
-
-    plugins.set(listOf("git4idea"))
-    updateSinceUntilBuild.set(false)
-}
-
-tasks {
-    // Set the JVM compatibility versions
-    withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
+    intellijPlatform {
+        defaultRepositories()
     }
+}
 
-    patchPluginXml {
-        sinceBuild.set("213")
-        changeNotes.set("""
+dependencies {
+    intellijPlatform {
+        intellijIdeaCommunity("2025.1.3")
+        bundledPlugin("Git4Idea")
+        pluginVerifier()
+    }
+}
+
+intellijPlatform {
+    pluginConfiguration {
+        ideaVersion {
+            sinceBuild = "231.1"
+            untilBuild = "252.*"
+        }
+        changeNotes = """
             <ul>
-                <li></li>
+            <li>Require at least IntelliJ Platform 2023.1</li>
             </ul>
-        """.trimIndent())
+        """.trimIndent()
     }
+    publishing {
+        val intellijPublishToken: String by project
+        token = intellijPublishToken
+    }
+    pluginVerification {
+        ides {
+            recommended()
+        }
+    }
+}
 
-    publishPlugin {
-        token.set(intellijPublishToken)
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
