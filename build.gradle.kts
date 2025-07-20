@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.novotnyr"
-version = "7-SNAPSHOT"
+version = "7"
 
 repositories {
     mavenCentral()
@@ -31,6 +31,7 @@ intellijPlatform {
         changeNotes = """
             <ul>
             <li>Require at least IntelliJ Platform 2023.1</li>
+            <li>Improve compatibility with recent Platforms</li>
             </ul>
         """.trimIndent()
     }
